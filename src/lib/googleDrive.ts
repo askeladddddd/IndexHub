@@ -71,17 +71,10 @@ function normalizeDriveFiles(files: GoogleDriveFile[]): DriveFileRecord[] {
     .sort((left, right) => left.fileName.localeCompare(right.fileName));
 }
 
-export async function listPngFilesInFolder(accessToken: string, folderId: string) {
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-  );
-
-  oauth2Client.setCredentials({ access_token: accessToken });
-
+export async function listPngFilesInFolder(folderId: string) {
   const drive = google.drive({
     version: "v3",
-    auth: oauth2Client,
+    auth: process.env.GOOGLE_API_KEY,
   });
 
   const response = await drive.files.list({

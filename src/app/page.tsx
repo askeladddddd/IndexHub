@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
 import { FolderInput } from "@/components/FolderInput";
 import type { DriveFileRecord } from "@/lib/googleDrive";
 
@@ -11,17 +10,11 @@ type ApiErrorResponse = {
 };
 
 export default function Home() {
-  const { status, data: session } = useSession();
   const [folderUrl, setFolderUrl] = useState("");
   const [rows, setRows] = useState<DriveFileRecord[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(false);
-
-  const isSignedIn = status === "authenticated";
-  function handleSignOut() {
-    signOut();
-  }
 
   async function handleFetchFiles() {
     setError(null);
@@ -101,31 +94,6 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-3 self-start sm:self-auto">
-          <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-right">
-            <p className="text-[0.7rem] uppercase tracking-[0.24em] text-slate-400">Session</p>
-            <p className="text-sm font-medium text-white">
-              {isSignedIn
-                ? session?.user?.email ?? session?.user?.name ?? "Signed in"
-                : "Not signed in"}
-            </p>
-          </div>
-          {isSignedIn ? (
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="rounded-2xl border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-50 transition hover:bg-cyan-400/20"
-            >
-              Sign out
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => signIn("google")}
-              className="rounded-2xl border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-50 transition hover:bg-cyan-400/20"
-            >
-              Sign in
-            </button>
-          )}
         </div>
       </header>
 
@@ -147,19 +115,13 @@ export default function Home() {
       </section>
 
       <section className="grid gap-6">
-        {isSignedIn ? (
           <FolderInput
             value={folderUrl}
             onChange={setFolderUrl}
             onSubmit={handleFetchFiles}
             loading={isFetching}
-            disabled={!isSignedIn}
+            disabled={false}
           />
-        ) : (
-          <div className="rounded-[1.75rem] border border-white/10 bg-[color:var(--surface)] p-6 text-sm text-slate-200 shadow-2xl shadow-slate-950/25 backdrop-blur-xl">
-            Sign in with Google to allow Drive folder access.
-          </div>
-        )}
 
         {(message || error) && (
           <div
