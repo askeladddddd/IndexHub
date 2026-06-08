@@ -9,9 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "next": "16.2.7",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "exceljs": "^4.4.0",
+    "googleapis": "^153.0.0",
+    "next": "14.2.32",
+    "next-auth": "^4.24.13",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

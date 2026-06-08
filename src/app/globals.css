@@ -1,26 +1,130 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #03111f;
+  --foreground: #e9f2fb;
+  --surface: rgba(5, 17, 31, 0.82);
+  --surface-strong: rgba(4, 12, 24, 0.92);
+  --border: rgba(172, 214, 236, 0.12);
+  --accent: #15b6d6;
+  --accent-2: #21c58e;
+}
+
+html.light {
+  --background: #f0f8ff;
+  --foreground: #020617;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface-strong: rgba(255, 255, 255, 0.95);
+  --border: rgba(21, 182, 214, 0.2);
+  --accent: #0f8aa3;
+  --accent-2: #169367;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-roboto-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
 }
 
 body {
+  min-height: 100%;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(21, 182, 214, 0.32), transparent 28%),
+    radial-gradient(circle at 80% 12%, rgba(33, 197, 142, 0.2), transparent 24%),
+    radial-gradient(circle at 50% 85%, rgba(10, 36, 64, 0.8), transparent 30%),
+    linear-gradient(180deg, #03111f 0%, #051629 44%, #020b14 100%);
+  background-attachment: fixed;
 }
+
+html.light body {
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(21, 182, 214, 0.1), transparent 28%),
+    radial-gradient(circle at 80% 12%, rgba(33, 197, 142, 0.1), transparent 24%),
+    radial-gradient(circle at 50% 85%, rgba(255, 255, 255, 0.9), transparent 30%),
+    linear-gradient(180deg, #f0f8ff 0%, #e0f2fe 44%, #bae6fd 100%);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 70%);
+}
+
+html.light body::before {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.15), transparent 70%);
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: rgba(21, 182, 214, 0.35);
+  color: #ffffff;
+}
+
+html.light ::selection {
+  background: rgba(21, 182, 214, 0.25);
+  color: #020b14;
+}
+
+/* Light mode overrides for Tailwind utility classes used in the app */
+html.light .text-white { color: #0f172a !important; }
+html.light .text-slate-50 { color: #020617 !important; }
+html.light .text-slate-100 { color: #0f172a !important; }
+html.light .text-slate-200 { color: #1e293b !important; }
+html.light .text-slate-300 { color: #334155 !important; }
+html.light .text-slate-400 { color: #475569 !important; }
+html.light .bg-slate-950\/70 { background-color: rgba(255, 255, 255, 0.8) !important; }
+html.light .bg-slate-950\/45 { background-color: rgba(255, 255, 255, 0.6) !important; }
+html.light .bg-slate-950 { background-color: #f8fafc !important; }
+html.light .border-white\/10 { border-color: rgba(0, 0, 0, 0.1) !important; }
+html.light .bg-white\/95 { background-color: rgba(255, 255, 255, 0.95) !important; }
+html.light .bg-white\/5 { background-color: rgba(0, 0, 0, 0.05) !important; }
+html.light .bg-white\/\[0\.04\] { background-color: rgba(0, 0, 0, 0.03) !important; }
+html.light .shadow-slate-950\/30 { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1) !important; }
+html.light .shadow-slate-950\/25 { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08) !important; }
+html.light .divide-white\/10 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(0, 0, 0, 0.1) !important; }
+
+/* Cyan adjustments */
+html.light .text-cyan-200\/80 { color: rgba(8, 145, 178, 0.8) !important; }
+html.light .text-cyan-100 { color: #0e7490 !important; }
+html.light .text-cyan-50 { color: #083344 !important; }
+html.light .border-cyan-400\/25 { border-color: rgba(6, 182, 214, 0.4) !important; }
+html.light .border-cyan-300\/30 { border-color: rgba(6, 182, 214, 0.4) !important; }
+html.light .border-t-cyan-300 { border-top-color: #06b6d4 !important; }
+html.light .bg-cyan-400\/10 { background-color: rgba(6, 182, 214, 0.15) !important; }
+html.light .bg-cyan-500 { background-color: #06b6d4 !important; }
+
+/* Emerald adjustments */
+html.light .border-emerald-500\/20 { border-color: rgba(16, 185, 129, 0.4) !important; }
+html.light .bg-emerald-500\/10 { background-color: rgba(16, 185, 129, 0.15) !important; }
+html.light .text-emerald-100 { color: #047857 !important; }
+html.light .text-emerald-100\/80 { color: rgba(4, 120, 87, 0.8) !important; }
+
+/* Rose adjustments */
+html.light .border-rose-500\/30 { border-color: rgba(244, 63, 94, 0.4) !important; }
+html.light .bg-rose-500\/10 { background-color: rgba(244, 63, 94, 0.15) !important; }
+html.light .text-rose-100 { color: #be123c !important; }
+
+/* Placeholder */
+html.light .placeholder\:text-slate-500::placeholder { color: #64748b !important; }
