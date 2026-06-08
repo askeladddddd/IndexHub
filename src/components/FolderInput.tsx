@@ -17,7 +17,7 @@ export function FolderInput({
 }: FolderInputProps) {
   return (
     <form
-      className="flex flex-col gap-3 rounded-[1.75rem] border border-white/10 bg-[color:var(--surface)] p-4 shadow-2xl shadow-slate-950/25 backdrop-blur-xl sm:p-5"
+      className="flex flex-col gap-3 rounded-[1.75rem] border border-white/10 bg-[color:var(--surface)] p-4 shadow-2xl shadow-slate-950/25 sm:p-5"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();

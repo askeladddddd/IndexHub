@@ -13,11 +13,11 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Topline IndexHub",
+  title: "IndexHub",
   description: "Google Drive File Extraction and Indexing System",
 };
 
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { cn } from "@/lib/utils";
 
 export default function RootLayout({
   children,
@@ -27,29 +27,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${robotoMono.variable} h-full antialiased`}
-      suppressHydrationWarning
+      className={cn("h-full", "antialiased", inter.variable, robotoMono.variable, "font-sans")}
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                let isLight = false;
-                const savedTheme = localStorage.getItem("theme");
-                if (savedTheme === "light" || (!savedTheme && window.matchMedia("(prefers-color-scheme: light)").matches)) {
-                  isLight = true;
-                }
-                if (isLight) {
-                  document.documentElement.classList.add("light");
-                }
-              } catch (e) {}
-            `,
-          }}
-        />
-      </head>
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-50">
-        <ThemeToggle />
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
       </body>
     </html>

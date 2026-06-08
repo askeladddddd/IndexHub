@@ -31,7 +31,7 @@ export function PreviewTable({ rows }: PreviewTableProps) {
   };
 
   return (
-    <div className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-[color:var(--surface)] shadow-2xl shadow-slate-950/25 backdrop-blur-xl">
+    <div className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-[color:var(--surface)] shadow-2xl shadow-slate-950/25">
       <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 sm:px-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-100">
           Preview

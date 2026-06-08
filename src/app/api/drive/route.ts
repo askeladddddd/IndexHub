@@ -20,8 +20,18 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ folderId, files });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error("Drive API Error:", error);
-    return NextResponse.json({ error: "Failed to fetch files from Google Drive using API key." }, { status: 500 });
+    
+    let errorMessage = "Failed to fetch files from Google Drive.";
+    if (error?.code === 404) {
+      errorMessage = "Google Drive folder not found. Please check the link.";
+    } else if (error?.code === 403) {
+      errorMessage = "Access denied. Make sure the folder is shared with 'Anyone with the link can view'.";
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: error?.code || 500 });
   }
 }
