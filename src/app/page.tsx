@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { FolderInput } from "@/components/FolderInput";
+import { PreviewTable } from "@/components/PreviewTable";
+import { ExportButton } from "@/components/ExportButton";
 import type { DriveFileRecord } from "@/lib/googleDrive";
 
 type ApiErrorResponse = {
@@ -15,6 +17,45 @@ export default function Home() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  async function handleExport() {
+    if (!rows.length) {
+      return;
+    }
+
+    setError(null);
+    setIsExporting(true);
+
+    try {
+      const response = await fetch("/api/export", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rows }),
+      });
+
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as ApiErrorResponse | null;
+        throw new Error(data?.error ?? "Unable to generate the Excel file.");
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = "topline-ph-qr-batch-extractor.xlsx";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(downloadUrl);
+    } catch (exportError) {
+      setError(exportError instanceof Error ? exportError.message : "Unable to export the Excel file.");
+    } finally {
+      setIsExporting(false);
+    }
+  }
 
   async function handleFetchFiles() {
     setError(null);
@@ -85,10 +126,10 @@ export default function Home() {
               Topline PH
             </p>
             <h1 className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
-              QR Batch Extractor
+              Topline IndexHub
             </h1>
-            <p className="text-sm text-slate-300">
-              Corporate-style Drive batch export with zero-safe Excel output.
+            <p className="text-sm text-slate-300 mt-1">
+              Google Drive File Extraction and Indexing System
             </p>
           </div>
         </div>
@@ -96,23 +137,6 @@ export default function Home() {
         <div className="flex items-center gap-3 self-start sm:self-auto">
         </div>
       </header>
-
-      <section className="grid gap-6">
-        <div className="rounded-[2rem] border border-white/10 bg-[color:var(--surface)] p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-xl sm:p-8">
-          <div className="inline-flex items-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-cyan-100">
-            Batch Export Workspace
-          </div>
-          <div className="mt-5 space-y-4">
-            <h2 className="max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-              Extract PNG QR batches from Drive and export a text-safe workbook.
-            </h2>
-            <p className="max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-              Paste a Google Drive folder link, preview all PNG files, and download a formatted.
-            </p>
-          </div>
-
-        </div>
-      </section>
 
       <section className="grid gap-6">
           <FolderInput
@@ -143,23 +167,18 @@ export default function Home() {
         )}
 
         {!isFetching && rows.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex flex-col gap-3 rounded-[1.75rem] border border-emerald-500/20 bg-emerald-500/10 p-5 text-emerald-100 shadow-2xl shadow-slate-950/25 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-8">
+            <div className="flex flex-col gap-4 rounded-[1.75rem] border border-white/10 bg-[color:var(--surface)] p-6 shadow-2xl shadow-slate-950/25 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm font-semibold">✅ Found {rows.length} files</p>
-                <p className="text-sm text-emerald-100/80">
-                  Data extracted successfully. Click below to view results and export.
+                <h2 className="text-xl font-semibold tracking-tight text-white">Extracted Results</h2>
+                <p className="text-sm text-slate-300">
+                  Showing {rows.length} records ready for export.
                 </p>
               </div>
-              <a
-                href="/preview"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-10 items-center justify-center rounded-xl bg-emerald-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-emerald-400"
-              >
-                View Results
-              </a>
+              <ExportButton disabled={!rows.length} loading={isExporting} onClick={handleExport} />
             </div>
+
+            <PreviewTable rows={rows} />
           </div>
         )}
       </section>
