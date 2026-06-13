@@ -77,13 +77,23 @@ export async function listPngFilesInFolder(folderId: string) {
     auth: process.env.GOOGLE_API_KEY,
   });
 
-  const response = await drive.files.list({
-    q: `'${folderId}' in parents and mimeType contains 'image/png' and trashed = false`,
-    fields: "files(id, name, webViewLink)",
-    orderBy: "name",
-    supportsAllDrives: true,
-    includeItemsFromAllDrives: true,
-  });
+  const allFiles: GoogleDriveFile[] = [];
+  let pageToken: string | undefined;
 
-  return normalizeDriveFiles(response.data.files ?? []);
+  do {
+    const response = await drive.files.list({
+      q: `'${folderId}' in parents and mimeType contains 'image/png' and trashed = false`,
+      fields: "nextPageToken, files(id, name, webViewLink)",
+      orderBy: "name",
+      pageSize: 1000,
+      supportsAllDrives: true,
+      includeItemsFromAllDrives: true,
+      ...(pageToken ? { pageToken } : {}),
+    });
+
+    allFiles.push(...(response.data.files ?? []));
+    pageToken = response.data.nextPageToken ?? undefined;
+  } while (pageToken);
+
+  return normalizeDriveFiles(allFiles);
 }
