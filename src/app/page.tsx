@@ -147,9 +147,17 @@ export default function Home() {
 
   function handleCopyTable() {
     if (!filtered.length) return;
-    const header = "SERIAL NUMBER\tFILE NAME\n";
-    const rowsText = filtered.map((row) => `${row.serialNumber}\t${row.fileName}`).join("\n");
-    navigator.clipboard.writeText(header + rowsText).then(() => {
+    const formatValue = (val: string) => {
+      // Prepend a single quote to numeric strings starting with zero
+      // so spreadsheets don't strip the leading zeros
+      return /^0\d+$/.test(val) ? `'${val}` : val;
+    };
+    const header = "SerialNumber\tQRCodeImage\tFileName";
+    const rowsText = filtered
+      .map((row) => `${formatValue(row.serialNumber)}\t${row.qrCodeImage}\t${formatValue(row.fileName)}`)
+      .join("\n");
+    const fullText = `${header}\n${rowsText}`;
+    navigator.clipboard.writeText(fullText).then(() => {
       toast.success("Table copied to clipboard");
     }).catch(() => {
       toast.error("Failed to copy table");
